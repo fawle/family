@@ -41,6 +41,7 @@ class IndexController extends AbstractActionController
     /**
      *
      * @return PersonTable
+     * todo swap this or service to separate db calls and object handling
      */
     public function getPeopleService() 
     {

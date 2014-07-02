@@ -106,10 +106,10 @@ class Person
      * @param int $family
      * @return Family
      */
-    public function addFamily($family)
+    public function addFamily(Family $family)
     {
-        $this->family[$family] = new Family;
-        return $this->family[$family];
+        $this->families[$family->getSpouse()->getId()] = $family;
+        return $this;
     }
     
     /**
@@ -316,6 +316,17 @@ class Person
             "parent_1" => $this->getParent1(),
             "parent_2" => $this->getParent2()
         );
+    }
+    
+    public function copy(Person $person)
+    {
+        $this->exchangeArray($person->getArrayCopy());
+        foreach($person->getFamilies() as $family) {
+            if (!isset($this->getFamilies()[$family->getSpouse()->getId()])) {
+                $this->addFamily($family);
+            }
+        }
+        return $this;
     }
 }
 ?>

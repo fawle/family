@@ -23,6 +23,9 @@ $(document).ready(function () {
         console.dir("y");
     });
 
+/**
+ * @todo: from bottom to top instead?
+ */
     function sizing()
     {
         /** sizings */
