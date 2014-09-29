@@ -13,11 +13,12 @@ $(document).ready(function () {
         }
     });
 
-    sizing();
 
-    $(window).resize(function () {
+    $(window).bind("load",function () {
         sizing();
     });
+
+
 
     $(".married").on("click", function() {
         console.dir("y");
@@ -31,10 +32,11 @@ $(document).ready(function () {
         /** sizings */
         $("ul:not(.root)>li:only-child>.family>.heir").each(function () {
             var heir = this;
+            //console.dir($(this).html());
             if (!$(heir).next().hasClass("spouse")) {
                 var padding = (parseInt($(heir).closest("ul").css("width")) - parseInt($(heir).css("width"))) / 2;
                 $(heir).css("margin-left", padding + "px");
-            }
+            } 
         });
 
         $(".heir").next().each(function () {
@@ -59,7 +61,7 @@ $(document).ready(function () {
             $(this).children("li").each(function (e){
                 minWidth+=parseInt($(this).outerWidth());
             })
-            $(that).css("min-width", minWidth+"px");
+            $(that).css("min-width", minWidth+10+"px");
         });
     }
 

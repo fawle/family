@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Zend Framework (http://framework.zend.com/)
  *
@@ -6,55 +7,52 @@
  * @copyright Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  */
-
 return array(
     'router' => array(
         'routes' => array(
-            
             // The following is a route to simplify getting started creating
             // new controllers and actions without needing to create a new
             // module. Simply drop new controllers in, and you can access them
             // using the path /application/:controller/:action
             'home' => array(
-                'type'    => 'Literal',
+                'type' => 'Literal',
                 'options' => array(
-                    'route'    => '/',
+                    'route' => '/',
                     'defaults' => array(
                         '__NAMESPACE__' => 'Family\Controller',
-                        'controller'    => 'Index',
-                        'action'        => 'index',
+                        'controller' => 'Index',
+                        'action' => 'index',
                     ),
                 ),
                 'may_terminate' => true,
                 'child_routes' => array(
+                    
                     'default' => array(
-                        'type'    => 'Segment',
+                        'type' => 'Segment',
                         'options' => array(
-                            'route'    => '[:controller][/:action][/:id]',
+                            'route' => '[:controller][/:action][/:id]',
                             'constraints' => array(
                                 'controller' => '[a-zA-Z][a-zA-Z0-9_-]*',
-                                'action'     => '[a-zA-Z][a-zA-Z0-9_-]*',
-                                'id'        => '[0-9]*'
+                                'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
+                                'id' => '[0-9]*'
                             ),
                             'defaults' => array(
-                                
                             ),
                         ),
                     ),
                 ),
             ),
-            'person' => array(
-                'type'    => 'Segment',
-                'options' => array(
-                    'route'    => '/person',
-                    'defaults' => array(
-                        '__NAMESPACE__' => 'Family\Controller',
-                        'controller'    => 'Index',
-                        'action'        => 'person',
+            'tree' => array(
+                        'type' => 'Literal',
+                        'options' => array(
+                            'route' => '/tree',
+                            'defaults' => array(
+                                '__NAMESPACE__' => 'Family\Controller',
+                                'controller' => 'Index',
+                                'action' => 'tree',
+                            ),
+                        ),
                     ),
-                ),
-                
-            ),
         ),
     ),
     'service_manager' => array(
@@ -67,12 +65,13 @@ return array(
         ),
     ),
     'translator' => array(
-        'locale' => 'ru_RU',
+        //'locale' => 'ru_RU',
+        'locale' => 'en_GB',
         'translation_file_patterns' => array(
             array(
-                'type'     => 'gettext',
+                'type' => 'gettext',
                 'base_dir' => __DIR__ . '/../language',
-                'pattern'  => '%s.mo',
+                'pattern' => '%s.mo',
             ),
         ),
     ),
@@ -83,15 +82,15 @@ return array(
     ),
     'view_manager' => array(
         'display_not_found_reason' => true,
-        'display_exceptions'       => true,
-        'doctype'                  => 'HTML5',
-        'not_found_template'       => 'error/404',
-        'exception_template'       => 'error/index',
+        'display_exceptions' => true,
+        'doctype' => 'HTML5',
+        'not_found_template' => 'error/404',
+        'exception_template' => 'error/index',
         'template_map' => array(
-            'layout/layout'           => __DIR__ . '/../view/layout/layout.phtml',
+            'layout/layout' => __DIR__ . '/../view/layout/layout.phtml',
             'application/index/index' => __DIR__ . '/../view/application/index/index.phtml',
-            'error/404'               => __DIR__ . '/../view/error/404.phtml',
-            'error/index'             => __DIR__ . '/../view/error/index.phtml',
+            'error/404' => __DIR__ . '/../view/error/404.phtml',
+            'error/index' => __DIR__ . '/../view/error/index.phtml',
         ),
         'template_path_stack' => array(
             __DIR__ . '/../view',
@@ -105,8 +104,8 @@ return array(
         ),
     ),
     'view_helpers' => array(
-        'invokables'=> array(
-            'nestedList' => 'Family\View\NestedList'  
+        'invokables' => array(
+            'nestedList' => 'Family\View\NestedList'
         )
     ),
 );

@@ -21,7 +21,13 @@ class IndexController extends AbstractActionController
     {
         return new ViewModel(array(
             'people' => $this->getPeopleService()->fetchWithMarriage(),
-            //'people' => $this->getPeopleService()->fetchAll(),
+        ));
+    }
+    
+    public function treeAction()
+    {
+        return new ViewModel(array(
+            'people' => $this->getPeopleService()->fetchWithMarriage(),
         ));
     }
 
