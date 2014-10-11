@@ -1,4 +1,7 @@
-<?php echo $this->doctype(); ?>
+<?php echo $this->doctype();
+$language = substr($this->plugin('translate')->getTranslator()->getLocale(), 0,2);
+
+//$language = "ru";?>
 
 <html lang="en">
 <head>
@@ -25,6 +28,8 @@
         ->prependFile($this->basePath() . '/js/html5shiv.js', 'text/javascript', array('conditional' => 'lt IE 9',)); ?>
 
 </head>
+
+
 <body>
     <div class="container-fluid">
 <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -37,35 +42,50 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="<?php echo $this->url('home') ?>"><?php echo $this->translate('Big Family Project') ?></a>
+      <a class="navbar-brand" href="<?php echo $this->url('home', array('language'=>$language)); ?>"><?php echo $this->translate('Big Family Project') ?></a>
     </div>
 
     <!-- Collect the nav links, forms, and other content for toggling -->
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
       <ul class="nav navbar-nav">
-        <li class="active"><a href="#">Nil Shirokov</a></li>
-        <li><a href="#">The Book</a></li>
+        <li class=""><a href="<?php echo $this->url("home/default", 
+                array('language'=>$language,'controller' => 'About', 'action' => 'nil')) ?>">
+                <?php echo $this->translate('Nil Shirokov') ?>
+            </a></li>
+        <li><a href="<?php echo $this->url("home/default", 
+                array('language'=>$language,'controller' => 'About', 'action' => 'book')) ?>">The Book</a></li>
         <li class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown">The Project <span class="caret"></span></a>
           <ul class="dropdown-menu" role="menu">
-            <li><a href="tree"><a href="<?php echo $this->url('tree') ?>"><?php echo $this->translate('Full tree') ?></a></li>
-            <li><a href="#">Another action</a></li>
-            <li><a href="#">Something else here</a></li>
+            <li><a href="tree"><a href="<?php echo $this->url("tree", 
+                array('language'=>$language)) ?>"><?php echo $this->translate('Full tree') ?></a></li>
+            <li><a href="<?php echo $this->url("tree/person", 
+                array('language'=>$language, 'id'=>94)) ?>"><?php echo $this->translate('Me') ?></a></li>
             <li class="divider"></li>
-            <li><a href="#">Separated link</a></li>
-            <li class="divider"></li>
-            <li><a href="#">One more separated link</a></li>
+            <li><a href="<?php echo $this->url("home/default", 
+                array('language'=>$language,'controller' => 'About', 'action' => 'technical')) ?>">
+                    <?php echo $this->translate('Technical stuff') ?>
+                </a>
+            </li>
+                <li class="divider"></li>
+            <li><a href="<?php echo $this->url("home/default", 
+                array('language'=>$language,'controller' => 'About', 'action' => 'help')) ?>">
+                    <?php echo $this->translate('Help &amp; Support') ?>
+                </a>
+            </li>
           </ul>
         </li>
       </ul>
-      <form class="navbar-form navbar-left" role="search">
+        <form class="navbar-form navbar-left" role="search" method="get" action='<?php echo $this->url("tree/search", 
+                array('language'=>$language)) ?>'>
         <div class="form-group">
-          <input type="text" class="form-control" placeholder="Search">
+          <input type="text" class="form-control" placeholder="<?php echo $this->translate('Search') ?>">
         </div>
-        <button type="submit" class="btn btn-default">Submit</button>
+        <button type="submit" class="btn btn-default"><?php echo $this->translate('Submit') ?></button>
       </form>
       <ul class="nav navbar-nav navbar-right">
-        <li><a href="#">Log in</a></li>
+        <li><a href="<?php echo $this->url("tree/admin", 
+                array('language'=>$language)) ?>"><?php echo $this->translate('Log in') ?></a></li>
         
       </ul>
     </div><!-- /.navbar-collapse -->

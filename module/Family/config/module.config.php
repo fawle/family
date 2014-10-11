@@ -15,23 +15,24 @@ return array(
             // module. Simply drop new controllers in, and you can access them
             // using the path /application/:controller/:action
             'home' => array(
-                'type' => 'Literal',
+                'type' => 'Segment',
                 'options' => array(
                     'route' => '/',
                     'defaults' => array(
                         '__NAMESPACE__' => 'Family\Controller',
-                        'controller' => 'Index',
+                        'controller' => 'About',
                         'action' => 'index',
+                        'language' => 'en',
                     ),
                 ),
                 'may_terminate' => true,
                 'child_routes' => array(
-                    
                     'default' => array(
                         'type' => 'Segment',
                         'options' => array(
-                            'route' => '[:controller][/:action][/:id]',
+                            'route' => ':language[/:controller][/:action][/:id]',
                             'constraints' => array(
+                                'language' => '[a-z]{2}',
                                 'controller' => '[a-zA-Z][a-zA-Z0-9_-]*',
                                 'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
                                 'id' => '[0-9]*'
@@ -43,16 +44,60 @@ return array(
                 ),
             ),
             'tree' => array(
-                        'type' => 'Literal',
+                'type' => 'Segment',
+                'options' => array(
+                    'route' => '/:language/tree',
+                    'defaults' => array(
+                        '__NAMESPACE__' => 'Family\Controller',
+                        'language' => 'en',
+                        'controller' => 'Tree',
+                        'action' => 'tree',
+                    ),
+                ),
+                'may_terminate' => true,
+                'child_routes' => array(
+                    'person' => array(
+                        'type' => 'Segment',
                         'options' => array(
-                            'route' => '/tree',
+                            'route' => '/:id',
+                            'constraints' => array(
+                                'id' => '[0-9]*'
+                            ),
                             'defaults' => array(
-                                '__NAMESPACE__' => 'Family\Controller',
-                                'controller' => 'Index',
-                                'action' => 'tree',
+                                'action' => 'person',
                             ),
                         ),
                     ),
+                    'search' => array(
+                        'type' => 'Segment',
+                        'options' => array(
+                            'route' => '/search',
+                            'constraints' => array(
+                            ),
+                            'defaults' => array(
+                                '__NAMESPACE__' => 'Family\Controller',
+                                'language' => 'en',
+                                'controller' => 'Tree',
+                                'action' => 'search',
+                            ),
+                        ),
+                    ),
+                    'admin' => array(
+                        'type' => 'Segment',
+                        'options' => array(
+                            'route' => '/admin',
+                            'constraints' => array(
+                            ),
+                            'defaults' => array(
+                                '__NAMESPACE__' => 'Family\Controller',
+                                'language' => 'en',
+                                'controller' => 'Tree',
+                                'action' => 'login',
+                            ),
+                        ),
+                    ),
+                )
+            ),
         ),
     ),
     'service_manager' => array(
@@ -77,7 +122,8 @@ return array(
     ),
     'controllers' => array(
         'invokables' => array(
-            'Family\Controller\Index' => 'Family\Controller\IndexController'
+            'Family\Controller\About' => 'Family\Controller\AboutController',
+            'Family\Controller\Tree' => 'Family\Controller\TreeController'
         ),
     ),
     'view_manager' => array(

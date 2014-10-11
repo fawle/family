@@ -22,6 +22,7 @@ class Module
     {
         $eventManager        = $e->getApplication()->getEventManager();
         $moduleRouteListener = new ModuleRouteListener();
+        $eventManager->attach(\Zend\Mvc\MvcEvent::EVENT_ROUTE, array($this, 'languageLocale'));
         $moduleRouteListener->attach($eventManager);
 
     }
@@ -59,5 +60,19 @@ class Module
                 },
             ),
         );
+    }
+    
+    /**
+     * 
+     * @param MvcEvent $e
+     */
+    public function languageLocale(MvcEvent $e)
+    {
+
+        $language = $e->getRouteMatch()->getParam('language');
+        if ($language == 'ru') {
+            $e->getApplication()->getServiceManager()->get('translator')->setLocale('ru_RU');
+        } 
+
     }
 }
