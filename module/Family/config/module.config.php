@@ -17,10 +17,7 @@ return array(
             'home' => array(
                 'type' => 'Segment',
                 'options' => array(
-                    'route' => '/:language',
-                    'constraints' => array(
-                                'language' => '[a-z]{2}',
-                            ),
+                    'route' => '/',
                     'defaults' => array(
                         '__NAMESPACE__' => 'Family\Controller',
                         'controller' => 'About',
@@ -33,7 +30,7 @@ return array(
                     'default' => array(
                         'type' => 'Segment',
                         'options' => array(
-                            'route' => '[/:controller][/:action][/:id]',
+                            'route' => ':language[/:controller][/:action][/:id]',
                             'constraints' => array(
                                 'language' => '[a-z]{2}',
                                 'controller' => '[a-zA-Z][a-zA-Z0-9_-]*',

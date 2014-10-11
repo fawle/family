@@ -42,7 +42,7 @@ $language = substr($this->plugin('translate')->getTranslator()->getLocale(), 0,2
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="<?php echo $this->url('home', array('language'=>$language)); ?>"><?php echo $this->translate('Big Family Project') ?></a>
+      <a class="navbar-brand" href="<?php echo $this->url('home').$language ;?>"><?php echo $this->translate('Big Family Project') ?></a>
     </div>
 
     <!-- Collect the nav links, forms, and other content for toggling -->
@@ -92,7 +92,14 @@ $language = substr($this->plugin('translate')->getTranslator()->getLocale(), 0,2
             $newLanguage = 'ru';
             $switch = 'Русский';
         }
-        echo str_ireplace($language, $newLanguage, $this->serverUrl(true)); ?>"><?php echo $switch; ?></a></li>
+        
+        if (!strpos($this->serverUrl(true), $language)) {
+            echo $this->serverUrl(true).$newLanguage;
+        } else {
+            echo str_ireplace($language, $newLanguage, $this->serverUrl(true));
+        }?>">
+            <?php echo $switch; ?>
+            </a></li>
         <li><a href="<?php echo $this->url("tree/admin", 
                 array('language'=>$language)) ?>"><?php echo $this->translate('Log in') ?></a></li>
         
