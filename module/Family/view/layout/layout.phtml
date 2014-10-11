@@ -84,6 +84,15 @@ $language = substr($this->plugin('translate')->getTranslator()->getLocale(), 0,2
         <button type="submit" class="btn btn-default"><?php echo $this->translate('Submit') ?></button>
       </form>
       <ul class="nav navbar-nav navbar-right">
+        <li><a href="<?php 
+        if ($language == 'ru') {
+            $newLanguage = 'en';
+            $switch = 'English';
+        } else {
+            $newLanguage = 'ru';
+            $switch = 'Русский';
+        }
+        echo str_ireplace($language, $newLanguage, $this->serverUrl(true)); ?>"><?php echo $switch; ?></a></li>
         <li><a href="<?php echo $this->url("tree/admin", 
                 array('language'=>$language)) ?>"><?php echo $this->translate('Log in') ?></a></li>
         

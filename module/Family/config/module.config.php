@@ -17,7 +17,10 @@ return array(
             'home' => array(
                 'type' => 'Segment',
                 'options' => array(
-                    'route' => '/',
+                    'route' => '/:language',
+                    'constraints' => array(
+                                'language' => '[a-z]{2}',
+                            ),
                     'defaults' => array(
                         '__NAMESPACE__' => 'Family\Controller',
                         'controller' => 'About',
@@ -30,7 +33,7 @@ return array(
                     'default' => array(
                         'type' => 'Segment',
                         'options' => array(
-                            'route' => ':language[/:controller][/:action][/:id]',
+                            'route' => '[/:controller][/:action][/:id]',
                             'constraints' => array(
                                 'language' => '[a-z]{2}',
                                 'controller' => '[a-zA-Z][a-zA-Z0-9_-]*',
@@ -47,6 +50,9 @@ return array(
                 'type' => 'Segment',
                 'options' => array(
                     'route' => '/:language/tree',
+                    'constraints' => array(
+                                'language' => '[a-z]{2}',
+                            ),
                     'defaults' => array(
                         '__NAMESPACE__' => 'Family\Controller',
                         'language' => 'en',
