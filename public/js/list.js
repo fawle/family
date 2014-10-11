@@ -29,6 +29,7 @@ $(document).ready(function () {
  */
     function sizing()
     {
+        console.dir("sizing...");
         /** sizings */
         $("ul:not(.root)>li:only-child>.family>.heir").each(function () {
             var heir = this;
