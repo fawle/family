@@ -23,6 +23,7 @@ class Module
         $eventManager        = $e->getApplication()->getEventManager();
         $moduleRouteListener = new ModuleRouteListener();
         $eventManager->attach(\Zend\Mvc\MvcEvent::EVENT_ROUTE, array($this, 'languageLocale'));
+        $eventManager->attach('render', array($this, 'registerJsonStrategy'), 100);
         $moduleRouteListener->attach($eventManager);
 
     }
@@ -74,5 +75,32 @@ class Module
             $e->getApplication()->getServiceManager()->get('translator')->setLocale('ru_RU');
         } 
 
+    }
+    
+    public function registerJsonStrategy($e)
+    {
+        $matches    = $e->getRouteMatch();
+        if (!$matches) {
+            return;
+        }
+        $controller = $matches->getParam('controller');
+
+        if (false === strpos($controller, 'Api')) {
+            // not a controller from this module
+            return;
+        }
+
+        // Potentially, you could be even more selective at this point, and test
+        // for specific controller classes, and even specific actions or request
+        // methods.
+
+        // Set the JSON strategy when controllers from this module are selected
+        $app          = $e->getTarget();
+        $locator      = $app->getServiceManager();
+        $view         = $locator->get('Zend\View\View');
+        $jsonStrategy = $locator->get('ViewJsonStrategy');
+
+        // Attach strategy, which is a listener aggregate, at high priority
+        $view->getEventManager()->attach($jsonStrategy, 100);
     }
 }

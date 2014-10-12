@@ -1,6 +1,8 @@
 $(document).ready(function () {
 
-
+    /**
+     * list functions to refactor
+     */
     $("div.family:empty").remove();
     $("div.spouse:empty").addClass("none");
 
@@ -12,58 +14,43 @@ $(document).ready(function () {
             $(this).addClass("noline");
         }
     });
+    /**
+     *  end list
+     */
 
+    $(".typeahead").each(function () {
+        var element = $(this);
 
-    $(window).bind("load",function () {
-        sizing();
-    });
-
-
-
-    $(".married").on("click", function() {
-        console.dir("y");
-    });
-
-/**
- * @todo: from bottom to top instead?
- */
-    function sizing()
-    {
-        console.dir("sizing...");
-        /** sizings */
-        $("ul:not(.root)>li:only-child>.family>.heir").each(function () {
-            var heir = this;
-            //console.dir($(this).html());
-            if (!$(heir).next().hasClass("spouse")) {
-                var padding = (parseInt($(heir).closest("ul").css("width")) - parseInt($(heir).css("width"))) / 2;
-                $(heir).css("margin-left", padding + "px");
-            } 
+        var url = baseUrl + "/api/search";
+        var typeAheadList = new Bloodhound({
+            prefetch: {
+                url: url,
+                filter: function (list) {
+                    console.dir(list);
+                    return $.map(list, function (data) {
+                        return {name: data.name, id:data.id};
+                    });
+                }
+            },
+            datumTokenizer: function (d) {
+                return Bloodhound.tokenizers.whitespace(d.name);
+            },
+            queryTokenizer: Bloodhound.tokenizers.whitespace
         });
-
-        $(".heir").next().each(function () {
-            if ($(this).hasClass("spouse")) {
-                var width = $(this).prev().outerWidth() > $(this).outerWidth() ? $(this).prev().outerWidth() : $(this).outerWidth();
-                $(this).closest(".family").css("min-width", parseInt(width) * 2);
-            }
-        });
-
-        $("li").each(function () {
-                var minWidth = 0;
-                var that = this;
-                $(this).children(".family").each(function (e){
-                    minWidth+=parseInt($(this).outerWidth());
-                })
-                $(that).css("min-width", minWidth+"px");
-       });
-
-        $("ul").each(function () {
-            var minWidth = 0;
-            var that = this;
-            $(this).children("li").each(function (e){
-                minWidth+=parseInt($(this).outerWidth());
-            })
-            $(that).css("min-width", minWidth+10+"px");
-        });
+        typeAheadList.initialize();
+        $(this).removeClass('typeahead').typeahead(null, {
+            displayKey: 'name',
+            source: typeAheadList.ttAdapter()
+        }
+        ).on("typeahead:selected", function(e, datum){
+                var form = $(this).parents("form:first");
+            
+                    form.attr("action", baseUrl+"/ru/tree/person/" + datum.id);
+                    form.submit();
+                
+            });
     }
+    );
+
 
 });

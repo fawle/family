@@ -48,8 +48,8 @@ return array(
                 'options' => array(
                     'route' => '/:language/tree',
                     'constraints' => array(
-                                'language' => '[a-z]{2}',
-                            ),
+                        'language' => '[a-z]{2}',
+                    ),
                     'defaults' => array(
                         '__NAMESPACE__' => 'Family\Controller',
                         'language' => 'en',
@@ -101,6 +101,34 @@ return array(
                     ),
                 )
             ),
+            'api' => array(
+                'type' => 'Literal',
+                'options' => array(
+                    'route' => '/api',
+                    'constraints' => array(
+                    ),
+                    'defaults' => array(
+                        '__NAMESPACE__' => 'Family\Controller',
+                        'language' => 'en',
+                        'controller' => 'Api',
+                        'action' => 'index',
+                    ),
+                ),
+                'may_terminate' => true,
+                'child_routes' => array(
+                    'search' => array(
+                        'type' => 'Literal',
+                        'options' => array(
+                            'route' => '/search',
+                            'constraints' => array(
+                            ),
+                            'defaults' => array(
+                                'action' => 'search',
+                            ),
+                        )
+                    )
+                )
+            )
         ),
     ),
     'service_manager' => array(
@@ -126,7 +154,8 @@ return array(
     'controllers' => array(
         'invokables' => array(
             'Family\Controller\About' => 'Family\Controller\AboutController',
-            'Family\Controller\Tree' => 'Family\Controller\TreeController'
+            'Family\Controller\Tree' => 'Family\Controller\TreeController',
+            'Family\Controller\Api' => 'Family\Controller\ApiController'
         ),
     ),
     'view_manager' => array(
