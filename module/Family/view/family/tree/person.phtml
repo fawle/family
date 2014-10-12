@@ -1,4 +1,4 @@
-
+<div class="container-fluid">
 
 <div class="page-header">
     <h1><?php echo $this->translate('Family'); ?></h1>
@@ -9,7 +9,7 @@
 ?>
 
 <div class="tree">
-    <ul id="p_root_children" class="root">
+    <ul id="p_root_children" class="root" style="width: 6300px">
         <?php
 
         $this->nestedList($this->people, $this->start); ?>
@@ -17,3 +17,4 @@
 </div>
 
 <div class="clearfix"></div>
+</div>
