@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Zend Framework (http://framework.zend.com/)
  *
@@ -16,25 +17,35 @@ use Zend\Db\TableGateway\TableGateway;
 use Family\Model\Person;
 use Family\Service\PersonTable;
 
-class Module
-{
-    public function onBootstrap(MvcEvent $e)
-    {
-        $eventManager        = $e->getApplication()->getEventManager();
+class Module {
+
+    /**
+     * 
+     * @param MvcEvent $e
+     */
+    public function onBootstrap(MvcEvent $e) {
+        $this->initAcl($e);
+        $eventManager = $e->getApplication()->getEventManager();
         $moduleRouteListener = new ModuleRouteListener();
         $eventManager->attach(\Zend\Mvc\MvcEvent::EVENT_ROUTE, array($this, 'languageLocale'));
         $eventManager->attach('render', array($this, 'registerJsonStrategy'), 100);
+        $eventManager->attach('route', array($this, 'checkAcl'), 1);
         $moduleRouteListener->attach($eventManager);
-
     }
 
-    public function getConfig()
-    {
+    /**
+     * 
+     * @return type
+     */
+    public function getConfig() {
         return include __DIR__ . '/config/module.config.php';
     }
 
-    public function getAutoloaderConfig()
-    {
+    /**
+     * 
+     * @return type
+     */
+    public function getAutoloaderConfig() {
         return array(
             'Zend\Loader\StandardAutoloader' => array(
                 'namespaces' => array(
@@ -43,12 +54,15 @@ class Module
             ),
         );
     }
-    
-    public function getServiceConfig()
-    {
+
+    /**
+     * 
+     * @return type
+     */
+    public function getServiceConfig() {
         return array(
             'factories' => array(
-                'Family\Service\PersonTable' =>  function($sm) {
+                'Family\Service\PersonTable' => function($sm) {
                     $tableGateway = $sm->get('PeopleTableGateway');
                     $table = new PersonTable($tableGateway);
                     return $table;
@@ -62,45 +76,80 @@ class Module
             ),
         );
     }
-    
+
     /**
      * 
      * @param MvcEvent $e
      */
-    public function languageLocale(MvcEvent $e)
-    {
+    public function languageLocale(MvcEvent $e) {
 
         $language = $e->getRouteMatch()->getParam('language');
         if ($language == 'ru') {
             $e->getApplication()->getServiceManager()->get('translator')->setLocale('ru_RU');
-        } 
-
+        }
     }
-    
-    public function registerJsonStrategy($e)
-    {
-        $matches    = $e->getRouteMatch();
+
+    /**
+     * 
+     * @param type $e
+     * @return type
+     */
+    public function registerJsonStrategy($e) {
+        $matches = $e->getRouteMatch();
         if (!$matches) {
             return;
         }
         $controller = $matches->getParam('controller');
-
         if (false === strpos($controller, 'Api')) {
-            // not a controller from this module
             return;
         }
-
-        // Potentially, you could be even more selective at this point, and test
-        // for specific controller classes, and even specific actions or request
-        // methods.
-
-        // Set the JSON strategy when controllers from this module are selected
-        $app          = $e->getTarget();
-        $locator      = $app->getServiceManager();
-        $view         = $locator->get('Zend\View\View');
+        $app = $e->getTarget();
+        $locator = $app->getServiceManager();
+        $view = $locator->get('Zend\View\View');
         $jsonStrategy = $locator->get('ViewJsonStrategy');
-
-        // Attach strategy, which is a listener aggregate, at high priority
         $view->getEventManager()->attach($jsonStrategy, 100);
     }
+
+    /**
+     * 
+     * @param MvcEvent $e
+     */
+    public function initAcl(MvcEvent $e) {
+        $acl = new \Zend\Permissions\Acl\Acl();
+        $roles = include __DIR__ . '/config/module.acl.roles.php';
+        $allResources = array();
+        foreach ($roles as $role => $resources) {
+            $role = new \Zend\Permissions\Acl\Role\GenericRole($role);
+            $acl->addRole($role);
+            $allResources = array_merge($resources, $allResources);
+            //adding resources
+            foreach ($resources as $resource) {
+                if (!$acl->hasResource($resource))
+                    $acl->addResource(new \Zend\Permissions\Acl\Resource\GenericResource($resource));
+            }
+            //adding restrictions
+            foreach ($allResources as $resource) {
+                $acl->allow($role, $resource);
+            }
+        }
+        $e->getViewModel()->acl = $acl;
+    }
+
+    /**
+     * 
+     * @param MvcEvent $e
+     */
+    public function checkAcl(MvcEvent $e) {
+        $route = $e->getRouteMatch()->getMatchedRouteName();
+        //set role
+        $userRole = 'guest';
+        $response = $e->getResponse();
+        try {
+            $e->getViewModel()->acl->isAllowed($userRole, $route);
+        } catch (\Zend\Permissions\Acl\Exception\InvalidArgumentException $ex) {
+            $response->getHeaders()->addHeaderLine('Location', $e->getRequest()->getBaseUrl() . '/404');
+            $response->setStatusCode(404);
+        }
+    }
+
 }
