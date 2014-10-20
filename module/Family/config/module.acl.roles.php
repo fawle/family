@@ -7,9 +7,10 @@ return array(
         'register',
         'tree'
     ),
+    'user' => array(
+        'zfcuser'
+    ),
     'admin'=> array(
-        'admin',
-        'add-user',
-        'delete-user'
+        'zfcadmin',
     ),
 );

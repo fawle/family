@@ -24,12 +24,12 @@ class Module {
      * @param MvcEvent $e
      */
     public function onBootstrap(MvcEvent $e) {
-        $this->initAcl($e);
+        //$this->initAcl($e);
         $eventManager = $e->getApplication()->getEventManager();
         $moduleRouteListener = new ModuleRouteListener();
         $eventManager->attach(\Zend\Mvc\MvcEvent::EVENT_ROUTE, array($this, 'languageLocale'));
         $eventManager->attach('render', array($this, 'registerJsonStrategy'), 100);
-        $eventManager->attach('route', array($this, 'checkAcl'), 1);
+        //$eventManager->attach('route', array($this, 'checkAcl'), 1);
         $moduleRouteListener->attach($eventManager);
     }
 
@@ -145,10 +145,11 @@ class Module {
         $userRole = 'guest';
         $response = $e->getResponse();
         try {
-            $e->getViewModel()->acl->isAllowed($userRole, $route);
+            if (!$e->getViewModel()->acl->isAllowed($userRole, $route)){
+                throw new \Exception("access denied");
+            };
         } catch (\Zend\Permissions\Acl\Exception\InvalidArgumentException $ex) {
-            $response->getHeaders()->addHeaderLine('Location', $e->getRequest()->getBaseUrl() . '/404');
-            $response->setStatusCode(404);
+            throw new \Exception("bad config");
         }
     }
 

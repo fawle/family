@@ -3,7 +3,6 @@
 return array(
     'router' => array(
         'routes' => array(
-
             'home' => array(
                 'type' => 'Segment',
                 'options' => array(
@@ -27,12 +26,34 @@ return array(
                                 'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
                                 'id' => '[0-9]*'
                             ),
-                            'defaults' => array(
-                              
-                            ),
+                            'defaults' => array(),
                         ),
                     ),
                 ),
+            ),
+            'zfcuser' => array(
+                'type' => 'Segment',
+                'priority' => 1000,
+                'options' => array(
+                    'route' => '/:language/user',
+                    'defaults' => array(
+                        'controller' => 'zfcuser',
+                        'action' => 'index',
+                        'language' => 'en',
+                    ),
+                ),
+            ),
+            'zfcadmin' => array(
+                'type' => 'literal',
+                'options' => array(
+                    'route' => '/admin',
+                    'defaults' => array(
+                        'controller' => 'Family\Controller\Admin',
+                        'action' => 'index',
+                    ),
+                ),
+                'may_terminate' => true,
+                'child_routes' => array()
             ),
             'tree' => array(
                 'type' => 'Segment',
@@ -66,8 +87,7 @@ return array(
                         'type' => 'Segment',
                         'options' => array(
                             'route' => '/search',
-                            'constraints' => array(
-                            ),
+                            'constraints' => array(),
                             'defaults' => array(
                                 '__NAMESPACE__' => 'Family\Controller',
                                 'language' => 'en',
@@ -75,29 +95,14 @@ return array(
                                 'action' => 'search',
                             ),
                         ),
-                    ),
-                    'admin' => array(
-                        'type' => 'Segment',
-                        'options' => array(
-                            'route' => '/admin',
-                            'constraints' => array(
-                            ),
-                            'defaults' => array(
-                                '__NAMESPACE__' => 'Family\Controller',
-                                'language' => 'en',
-                                'controller' => 'Tree',
-                                'action' => 'login',
-                            ),
-                        ),
-                    ),
+                    )
                 )
             ),
             'api' => array(
                 'type' => 'Literal',
                 'options' => array(
                     'route' => '/api',
-                    'constraints' => array(
-                    ),
+                    'constraints' => array(),
                     'defaults' => array(
                         '__NAMESPACE__' => 'Family\Controller',
                         'language' => 'en',
@@ -111,8 +116,7 @@ return array(
                         'type' => 'Literal',
                         'options' => array(
                             'route' => '/search',
-                            'constraints' => array(
-                            ),
+                            'constraints' => array(),
                             'defaults' => array(
                                 'action' => 'search',
                             ),
@@ -132,7 +136,7 @@ return array(
         ),
     ),
     'translator' => array(
-        //'locale' => 'ru_RU',
+//'locale' => 'ru_RU',
         'locale' => 'en_GB',
         'translation_file_patterns' => array(
             array(
@@ -145,6 +149,7 @@ return array(
     'controllers' => array(
         'invokables' => array(
             'Family\Controller\About' => 'Family\Controller\AboutController',
+            'Family\Controller\Admin' => 'Family\Controller\AdminController',
             'Family\Controller\Tree' => 'Family\Controller\TreeController',
             'Family\Controller\Api' => 'Family\Controller\ApiController'
         ),
@@ -168,8 +173,7 @@ return array(
     // Placeholder for console routes
     'console' => array(
         'router' => array(
-            'routes' => array(
-            ),
+            'routes' => array(),
         ),
     ),
     'view_helpers' => array(
@@ -177,4 +181,37 @@ return array(
             'nestedList' => 'Family\View\NestedList'
         )
     ),
+    'zfcadmin' => array(
+        'use_admin_layout' => true,
+    //'admin_layout_template' => 'layout/layout',
+    ),
+    'bjyauthorize' => array(
+// Role providers to be used to load all available roles into Zend\Permissions\Acl\Acl
+// Keys are the provider service names, values are the options to be passed to the provider
+        'role_providers' => array(
+            'BjyAuthorize\Provider\Role\Config' => array(
+                'guest' => array(),
+                'user' => array('children' => array(
+                        'admin' => array(),
+                    )),
+            )
+        ),
+        'guards' => array(
+            
+            /* If this guard is specified here (i.e. it is enabled), it will block
+             * access to all routes unless they are specified here.
+             */
+            'BjyAuthorize\Guard\Route' => array(
+                array('route' => 'zfcuser', 'roles' => array('user')),
+                array('route' => 'zfcuser/logout', 'roles' => array('user')),
+                array('route' => 'zfcuser/login', 'roles' => array('guest')),
+                array('route' => 'zfcuser/register', 'roles' => array('guest')),
+                array('route' => 'zfcadmin', 'roles' => array('admin')),
+                array('route' => 'home', 'roles' => array('guest', 'user', 'admin')),
+                array('route' => 'home/default', 'roles' => array('guest', 'user', 'admin')),
+                array('route' => 'tree', 'roles' => array('guest', 'user', 'admin')),
+                array('route' => 'tree/person', 'roles' => array('guest', 'user', 'admin')), 
+            ),
+        ),
+    )
 );

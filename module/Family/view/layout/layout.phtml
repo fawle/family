@@ -107,8 +107,17 @@ $language = substr($this->plugin('translate')->getTranslator()->getLocale(), 0,2
         }?>">
             <?php echo $switch; ?>
             </a></li>
-        <li><a href="<?php echo $this->url("tree/admin", 
-                array('language'=>$language)) ?>"><?php echo $this->translate('Log in') ?></a></li>
+        <li>
+            <?php if (!$this->zfcUserIdentity()) { ?>
+            <a href="<?php echo $this->url("zfcuser/login", 
+                array('language'=>$language)); ?>"><?php echo $this->translate('Log in'); ?></a>
+            <?php } else { 
+                ?>
+            
+            <a href="<?php echo $this->url("zfcuser/logout", 
+                array('language'=>$language)); ?>"><?php echo $this->zfcUserDisplayName() . " - " .$this->translate('Log out'); ?></a>
+            <?php } ?>
+        </li>
         
       </ul>
     </div><!-- /.navbar-collapse -->
